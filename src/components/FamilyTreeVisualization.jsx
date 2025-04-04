@@ -1,12 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useFamily } from '../context/FamilyContext'
-import Treant from 'treant-js'
 import 'treant-js/Treant.css'
+// Import Raphael first
+import Raphael from 'raphael'
+// Then import Treant
+import { Treant } from 'treant-js'
+import EditMember from './EditMember'
+
+// Make Raphael available globally
+window.Raphael = Raphael
 
 const FamilyTreeVisualization = () => {
   const { familyMembers } = useFamily()
   const treeRef = useRef(null)
   const [treeInstance, setTreeInstance] = useState(null)
+  const [selectedMemberId, setSelectedMemberId] = useState(null)
 
   useEffect(() => {
     if (familyMembers.length === 0) {
@@ -28,9 +36,9 @@ const FamilyTreeVisualization = () => {
     const config = {
       chart: {
         container: '#tree-simple',
-        levelSeparation: 120,
-        siblingSeparation: 80,
-        subTeeSeparation: 80,
+        levelSeparation: 80,
+        siblingSeparation: 60,
+        subTeeSeparation: 60,
         rootOrientation: 'NORTH',
         node: {
           HTMLclass: 'nodeExample1',
@@ -41,6 +49,21 @@ const FamilyTreeVisualization = () => {
           style: {
             'stroke-width': 2,
             'stroke': '#ccc'
+          }
+        },
+        animation: {
+          nodeAnimation: 'easeOutBounce',
+          nodeSpeed: 700,
+          connectorsAnimation: 'bounce',
+          connectorsSpeed: 700
+        },
+        callback: {
+          onClick: (node) => {
+            const nodeId = node.nodeId
+            const memberId = findMemberIdByNodeId(nodeId, familyMembers)
+            if (memberId) {
+              setSelectedMemberId(memberId)
+            }
           }
         }
       },
@@ -65,6 +88,17 @@ const FamilyTreeVisualization = () => {
       }
     }
   }, [familyMembers])
+
+  // Helper function to find member ID by node ID
+  const findMemberIdByNodeId = (nodeId, members) => {
+    // Skip the virtual root node
+    if (nodeId === 'tree-simple') return null
+    
+    // Find the member with the matching name
+    const nodeName = document.querySelector(`#${nodeId} .name`).textContent
+    const member = members.find(m => m.name === nodeName)
+    return member ? member.id : null
+  }
 
   const buildTreeStructure = (members) => {
     if (!members || members.length === 0) {
@@ -124,10 +158,32 @@ const FamilyTreeVisualization = () => {
     return buildNode(rootMembers[0])
   }
 
+  const handleCloseEdit = () => {
+    setSelectedMemberId(null)
+  }
+
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Family Tree</h2>
-      <div id="tree-simple" ref={treeRef} className="w-full min-h-[600px] overflow-auto"></div>
+    <div className="p-4 bg-white rounded-lg shadow-md">
+      <h2 className="mb-4 text-xl font-bold text-center">Family Tree</h2>
+      <div 
+        id="tree-simple" 
+        ref={treeRef} 
+        className="w-full overflow-auto" 
+        style={{ 
+          height: '500px',
+          maxHeight: '80vh',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          padding: '20px'
+        }}
+      ></div>
+      
+      {selectedMemberId && (
+        <EditMember 
+          memberId={selectedMemberId} 
+          onClose={handleCloseEdit} 
+        />
+      )}
     </div>
   )
 }

@@ -4,32 +4,23 @@ import { toast } from 'react-toastify'
 const FamilyContext = createContext()
 
 export const FamilyProvider = ({ children }) => {
-  // Mock data for preview
+  // Simplified mock data with English names
   const mockData = [
     {
       id: 1,
       name: 'John Smith',
-      age: 50,
+      age: 45,
       gender: 'male',
       parents: [],
-      spouse: 2,
-      children: [3]
+      spouse: null,
+      children: [2]
     },
     {
       id: 2,
-      name: 'Mary Smith',
-      age: 48,
-      gender: 'female',
-      parents: [],
-      spouse: 1,
-      children: [3]
-    },
-    {
-      id: 3,
       name: 'Tom Smith',
       age: 20,
       gender: 'male',
-      parents: [1, 2],
+      parents: [1],
       spouse: null,
       children: []
     }
@@ -77,12 +68,85 @@ export const FamilyProvider = ({ children }) => {
   }
 
   const updateRelationships = (memberId, updates) => {
-    setFamilyMembers(prev => prev.map(member => {
-      if (member.id === memberId) {
-        return { ...member, ...updates }
+    // First, find the member to update
+    const memberToUpdate = familyMembers.find(m => m.id === memberId)
+    if (!memberToUpdate) return
+    
+    // Create a copy of the current members
+    let updatedMembers = [...familyMembers]
+    
+    // Update the member's basic info
+    const memberIndex = updatedMembers.findIndex(m => m.id === memberId)
+    updatedMembers[memberIndex] = {
+      ...updatedMembers[memberIndex],
+      name: updates.name,
+      age: updates.age,
+      gender: updates.gender
+    }
+    
+    // Handle parent relationship changes
+    if (updates.parents !== undefined) {
+      // Remove this member from their old parents' children arrays
+      updatedMembers = updatedMembers.map(member => {
+        if (memberToUpdate.parents && memberToUpdate.parents.includes(member.id)) {
+          return {
+            ...member,
+            children: member.children.filter(id => id !== memberId)
+          }
+        }
+        return member
+      })
+      
+      // Add this member to their new parents' children arrays
+      updatedMembers = updatedMembers.map(member => {
+        if (updates.parents.includes(member.id)) {
+          return {
+            ...member,
+            children: [...member.children, memberId]
+          }
+        }
+        return member
+      })
+      
+      // Update the member's parents
+      updatedMembers[memberIndex].parents = updates.parents
+    }
+    
+    // Handle spouse relationship changes
+    if (updates.spouse !== undefined) {
+      // Remove this member from their old spouse's spouse field
+      updatedMembers = updatedMembers.map(member => {
+        if (member.id === memberToUpdate.spouse) {
+          return {
+            ...member,
+            spouse: null
+          }
+        }
+        return member
+      })
+      
+      // Set this member's new spouse
+      updatedMembers[memberIndex].spouse = updates.spouse
+      
+      // Set the spouse's spouse field to this member
+      if (updates.spouse !== null) {
+        updatedMembers = updatedMembers.map(member => {
+          if (member.id === updates.spouse) {
+            return {
+              ...member,
+              spouse: memberId
+            }
+          }
+          return member
+        })
       }
-      return member
-    }))
+    }
+    
+    // Update the state with all changes
+    setFamilyMembers(updatedMembers)
+    
+    // Show success notification
+    toast.success(`Updated ${updates.name}'s information`)
   }
 
   const removeFamilyMember = (id) => {

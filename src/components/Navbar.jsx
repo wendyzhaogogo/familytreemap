@@ -1,19 +1,24 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { FaTree, FaUserPlus } from 'react-icons/fa'
+import { FaTree, FaUserPlus, FaUserEdit } from 'react-icons/fa'
 
 const Navbar = () => {
   return (
-    <nav className="bg-gray-800 p-4">
-      <ul className="flex gap-8 list-none m-0 p-0">
+    <nav className="p-4 bg-gray-800">
+      <ul className="flex gap-8 p-0 m-0 list-none">
         <li>
-          <Link to="/" className="text-white no-underline flex items-center gap-2 text-lg hover:text-blue-400 transition-colors">
+          <Link to="/" className="flex items-center gap-2 text-lg text-white no-underline transition-colors hover:text-blue-400">
             <FaTree /> Family Tree
           </Link>
         </li>
         <li>
-          <Link to="/add" className="text-white no-underline flex items-center gap-2 text-lg hover:text-blue-400 transition-colors">
+          <Link to="/add" className="flex items-center gap-2 text-lg text-white no-underline transition-colors hover:text-blue-400">
             <FaUserPlus /> Add Member
+          </Link>
+        </li>
+        <li>
+          <Link to="/edit" className="flex items-center gap-2 text-lg text-white no-underline transition-colors hover:text-blue-400">
+            <FaUserEdit /> Edit Members
           </Link>
         </li>
       </ul>
