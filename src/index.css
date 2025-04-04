@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply h-full;
+  }
+  body {
+    @apply h-full bg-gray-100 text-gray-900 font-sans antialiased;
+  }
+  #root {
+    @apply h-full;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600;
+  }
+  .btn-danger {
+    @apply bg-red-500 text-white hover:bg-red-600;
+  }
+  .input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+  .mapboxgl-map {
+    @apply rounded-lg overflow-hidden;
+  }
+}
+
+/* Treant.js specific styles */
+.Treant {
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.Treant > .node {
+  padding: 3px;
+  border-radius: 3px;
+}
+
+.Treant > .node img {
+  width: 100%;
+  height: 100%;
+}
+
+.Treant .collapse-switch {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.Treant .node.collapsed {
+  background-color: #f8f9fa;
+}
+
+.Treant .node.collapsed .collapse-switch {
+  background-color: #e9ecef;
+}
+
+.nodeExample1 {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  width: 180px;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.nodeExample1.male {
+  background-color: #e3f2fd;
+  border-color: #90caf9;
+}
+
+.nodeExample1.female {
+  background-color: #fce4ec;
+  border-color: #f48fb1;
+}
+
+.Treant .node-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.Treant .node-title {
+  font-size: 12px;
+  color: #666;
+  display: block;
+}
+
+.Treant .node {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.Treant .node:hover {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+}
+
+/* Ensure the tree container is visible */
+#tree-simple {
+  min-height: 600px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+} 
